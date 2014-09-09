@@ -5,6 +5,23 @@
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
 
+    // Build an array that defines the asset sources we want to include or exclude in the charts.
+    var assetSources = new Array();
+
+    // By default, include all of the asset sources.
+    assetSources['real-estate'] = true;
+    assetSources['movable'] = true;
+    assetSources['shares'] = true;
+    assetSources['bonds'] = true;
+    assetSources['cash'] = true;
+    assetSources['debts-or-outstanding'] = true;
+    assetSources['annual-regular-salary'] = true;
+    assetSources['annual-honorariums-salary'] = true;
+
+    // Set the asset sources we want to exclude from the charts.
+    // The asset source we want to exlude are listed in the 'exlude' URL parameter.
+    setAssetSourcesToExclude(assetSources);
+
     $(document).ready(function() {
 
         // Get delclarations JSON
@@ -20,6 +37,33 @@
         // Init the year tabs for 'Relative Asset Contribution' pie charts 
         initYearTabs(declarations);
     });
+
+    function setAssetSourcesToExclude(assetSources){
+        //From "/party/vv?exclude=shares,bonds,cash" get "exclude=shares,bonds,cash"
+        var urlQuery = window.location.search.substring(1);
+        var keyVals = urlQuery.split("&");
+
+        for (var i=0; i < keyVals.length; i++) {
+            var keyValString = keyVals[0];
+
+            // If URL param is the 'exclude' param then get the properties to exclude
+            if(keyValString.indexOf('exclude') == 0){
+                // Get [(exclude),(shares,bonds,cash)]
+                var keyValPair = keyValString.split('=');
+
+                // Get [shares, bonds, cash]
+                var assetSourcesToExclude = keyValPair[1].split(',');
+
+                // Set to false the properties we want to exlude
+                for(var i=0; i < assetSourcesToExclude.length; i++){
+                    key = assetSourcesToExclude[i];
+                    assetSources[key] = false;
+                }
+
+                break;
+            }
+        }
+    }
 
 
      /**
@@ -188,19 +232,9 @@
     /**
      * Draw pie chart showing the relative contribution from different asset sources.
      **/
-    function drawRelativeContributionPieChart(declaration, assetOrigin, title, chartContainerDivId){
+    function drawRelativeContributionPieChart(declaration, assetSource, title, chartContainerDivId){
 
-        var dataTable = google.visualization.arrayToDataTable([
-            ['Asset', 'Amount'],
-            ['Real Estate', declaration.realEstate[assetOrigin]],
-            ['Movable', declaration.movable[assetOrigin]],
-            ['Shares', declaration.shares[assetOrigin]],
-            ['Bonds', declaration.bonds[assetOrigin]],
-            ['Cash', declaration.cash[assetOrigin]],
-            ['Debts or Outstanding', declaration.debtsOrOutstanding[assetOrigin]],
-            ['Annual Regular Salary', declaration.annualSalary.regular[assetOrigin]],
-            ['Annual Honorariums Salary', declaration.annualSalary.honorariums[assetOrigin]]
-        ]);
+        var dataTable = getSingleDeclarationDataTable(declaration, assetSource);
 
         var options = {
             title: title,
@@ -210,42 +244,15 @@
 
         var chart = new google.visualization.PieChart(document.getElementById(chartContainerDivId));
 
-        chart.draw(dataTable, options);
-        
+        chart.draw(dataTable, options); 
     }
 
     /**
      * Draw combo chart showing the asset amounts throught the years. 
      **/
-    function drawAssetAmountsThroughoutTheYearsComboChart(declarations, assetOrigin, title, chartContainerDivId){
+    function drawAssetAmountsThroughoutTheYearsComboChart(declarations, assetSource, title, chartContainerDivId){
         
-        var dataTable = google.visualization.arrayToDataTable([]);
-
-        dataTable.addColumn('string', 'Year');
-        dataTable.addColumn('number', 'Real Estate');
-        dataTable.addColumn('number', 'Movable');
-        dataTable.addColumn('number', 'Shares');
-        dataTable.addColumn('number', 'Bonds');
-        dataTable.addColumn('number', 'Cash');
-        dataTable.addColumn('number', 'Debts or Outstanding');
-        dataTable.addColumn('number', 'Annual Regular Salary');
-        dataTable.addColumn('number', 'Annual Honorariums Salary');
-
-        $(declarations).each(function(index){
-            var declaration = $(this)[0];
-   
-            dataTable.addRow([
-                 declaration.year.toString(), 
-                 declaration.realEstate[assetOrigin], // Real Estate.
-                 declaration.movable[assetOrigin], // Movable.
-                 declaration.shares[assetOrigin], // Shares.
-                 declaration.bonds[assetOrigin], // Bonds.
-                 declaration.cash[assetOrigin], // Cash.
-                 declaration.debtsOrOutstanding[assetOrigin], // Debts or Outstanding.
-                 declaration.annualSalary.regular[assetOrigin], // Annual Regular Salary.
-                 declaration.annualSalary.honorariums[assetOrigin] // Annual Honorariums Salary.
-            ]);
-        });
+        var dataTable = getMultipleDeclarationsDataTable(declarations, assetSource, true);
 
         var options = {
             title : title,
@@ -263,33 +270,9 @@
     /**
      * Draw combo chart showing the asset amounts throught the years. 
      **/
-    function drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(declarations, assetOrigin, title, chartContainerDivId){
+    function drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(declarations, assetSource, title, chartContainerDivId){
         
-        var dataTable = google.visualization.arrayToDataTable([]);
-
-        dataTable.addColumn('string', 'Year');
-        dataTable.addColumn('number', 'Real Estate');
-        dataTable.addColumn('number', 'Movable');
-        dataTable.addColumn('number', 'Shares');
-        dataTable.addColumn('number', 'Bonds');
-        dataTable.addColumn('number', 'Cash');
-        dataTable.addColumn('number', 'Annual Regular Salary');
-        dataTable.addColumn('number', 'Annual Honorariums Salary');
-
-        $(declarations).each(function(index){
-            var declaration = $(this)[0];
-   
-            dataTable.addRow([
-                 declaration.year.toString(), 
-                 declaration.realEstate[assetOrigin], // Real Estate.
-                 declaration.movable[assetOrigin], // Movable.
-                 declaration.shares[assetOrigin], // Shares.
-                 declaration.bonds[assetOrigin], // Bonds.
-                 declaration.cash[assetOrigin], // Cash.
-                 declaration.annualSalary.regular[assetOrigin], // Annual Regular Salary.
-                 declaration.annualSalary.honorariums[assetOrigin] // Annual Honorariums Salary.
-            ]);
-        });
+        var dataTable = getMultipleDeclarationsDataTable(declarations, assetSource, false);
 
         var options = {
             title : title,
@@ -303,7 +286,149 @@
 
         var chart = new google.visualization.BarChart(document.getElementById(chartContainerDivId));
         chart.draw(dataTable, options);
-    } 
+    }
+
+    /**
+     * Get the data table for pie charts.
+     **/
+    function getSingleDeclarationDataTable(declaration, assetSource){
+        var dataTable = google.visualization.arrayToDataTable([]);
+
+        dataTable.addColumn('string', 'Asset');
+        dataTable.addColumn('number', 'Amount');
+
+
+        if(assetSources['real-estate'] == true){
+            dataTable.addRow(['Real Estate', declaration.realEstate[assetSource]]);
+        }
+
+        if(assetSources['movable'] == true){
+            dataTable.addRow(['Movable', declaration.movable[assetSource]]);
+        }
+
+        if(assetSources['shares'] == true){
+            dataTable.addRow(['Shares', declaration.shares[assetSource]]);
+        }
+
+        if(assetSources['bonds'] == true){
+            dataTable.addRow(['Bonds', declaration.bonds[assetSource]]);
+        }
+
+        if(assetSources['cash'] == true){
+            dataTable.addRow(['Cash', declaration.cash[assetSource]]);
+        }
+        
+        if(assetSources['debts-or-outstanding'] == true){
+            dataTable.addRow(['Debts or Outstanding', declaration.debtsOrOutstanding[assetSource]]);
+        }
+        
+        if(assetSources['annual-regular-salary'] == true){
+            dataTable.addRow(['Annual Regular Salary', declaration.annualSalary.regular[assetSource]]);
+        }
+        
+        if(assetSources['annual-honorariums-salary'] == true){
+            dataTable.addRow(['Annual Honorariums Salary', declaration.annualSalary.honorariums[assetSource]]);
+        }
+
+        return dataTable;
+
+    }
+
+    /**
+     * Get the data table for combo/bar/stacked charts.
+     **/
+    function getMultipleDeclarationsDataTable(declarations, assetSource, showDebtsOrOutstanding){
+        var dataTable = google.visualization.arrayToDataTable([]);
+
+        dataTable.addColumn('string', 'Year');
+
+        if(assetSources['real-estate'] == true){
+            dataTable.addColumn('number', 'Real Estate');
+        }
+
+        if(assetSources['movable'] == true){
+            dataTable.addColumn('number', 'Movable');
+        }
+
+        if(assetSources['shares'] == true){
+            dataTable.addColumn('number', 'Shares');
+        }
+
+        if(assetSources['bonds'] == true){
+            dataTable.addColumn('number', 'Bonds');
+        }
+
+        if(assetSources['cash'] == true){
+            dataTable.addColumn('number', 'Cash');
+        }
+        
+        if(assetSources['debts-or-outstanding'] == true && showDebtsOrOutstanding == true){
+            dataTable.addColumn('number', 'Debts or Outstanding');
+        }
+        
+        if(assetSources['annual-regular-salary'] == true){
+            dataTable.addColumn('number', 'Annual Regular Salary');
+        }
+        
+        if(assetSources['annual-honorariums-salary'] == true){
+            dataTable.addColumn('number', 'Annual Honorariums Salary');
+        }
+
+        dataTable.addRows(declarations.length);
+        
+        $(declarations).each(function(index){
+            var declaration = $(this)[0];
+
+            rowIndex = index;
+            columnIndex = 0;
+
+            dataTable.setCell(rowIndex, columnIndex, declaration.year.toString());
+            columnIndex++;
+
+            if(assetSources['real-estate'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.realEstate[assetSource]);
+                columnIndex++;
+            }
+
+            if(assetSources['movable'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.movable[assetSource]);
+                columnIndex++;
+            }
+
+            if(assetSources['shares'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.shares[assetSource]);
+                columnIndex++;
+            }
+
+            if(assetSources['bonds'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.bonds[assetSource]);
+                columnIndex++;
+            }
+
+            if(assetSources['cash'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.cash[assetSource]);
+                columnIndex++;
+            }
+            
+            if(assetSources['debts-or-outstanding'] == true && showDebtsOrOutstanding == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.debtsOrOutstanding[assetSource]);
+                columnIndex++;
+            }
+            
+            if(assetSources['annual-regular-salary'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.annualSalary.regular[assetSource]);
+                columnIndex++;
+            }
+            
+            if(assetSources['annual-honorariums-salary'] == true){
+                dataTable.setCell(rowIndex, columnIndex, declaration.annualSalary.honorariums[assetSource]);
+            }
+        });
+
+        return dataTable;
+    }
+
+    
 </script>
 
 

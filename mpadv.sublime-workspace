@@ -12,18 +12,10 @@
 	"buffers":
 	[
 		{
-			"file": "mpadv/views/party.py",
+			"file": "/home/georges/Dev/mp-asset-declaration-api/mpada/__init__.py",
 			"settings":
 			{
-				"buffer_size": 693,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "mpadv.sublime-project",
-			"settings":
-			{
-				"buffer_size": 154,
+				"buffer_size": 4177,
 				"line_ending": "Unix"
 			}
 		}
@@ -31,9 +23,17 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 369.0,
+		"height": 75.0,
 		"selected_items":
 		[
+			[
+				"jinj",
+				"Set Syntax: HTML (Jinja Templates)"
+			],
+			[
+				"jinja",
+				"Set Syntax: HTML (Jinja Templates)"
+			],
 			[
 				"prefer",
 				"Preferences: Settings - Default"
@@ -67,7 +67,7 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 467.0
+		"width": 602.0
 	},
 	"console":
 	{
@@ -88,22 +88,38 @@
 	},
 	"expanded_folders":
 	[
-		"/home/georges/Dev/mp-asset-declaration-visualizer",
 		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv",
-		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/views"
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/static",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/templates",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/utils",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/views",
+		"/home/georges/Dev/mp-asset-declaration-api",
+		"/home/georges/Dev/mp-asset-declaration-api/mpada",
+		"/home/georges/Dev/mp-asset-declaration-api/mpada/views"
 	],
 	"file_history":
 	[
-		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv.sublime-project",
 		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/views/party.py",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/templates/layout.html",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/templates/party.html",
+		"/home/georges/Dev/mp-asset-declaration-api/mpada/views/aggregate/declaration.py",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/views/mp.py",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/views/index.py",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/templates/index.html",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/templates/mp.html",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/static/bootstrap/css/bootstrap-theme.css",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv.sublime-project",
 		"/home/georges/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/runserver.py",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/utils/utils.py",
+		"/home/georges/Dev/mp-asset-declaration-visualizer/mpadv/__init__.py",
 		"/home/georges/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
 		"/home/georges/.config/sublime-text-3/Packages/SublimeLinter/SublimeLinter.sublime-settings",
 		"/home/georges/.config/sublime-text-3/Packages/Package Control/Package Control.sublime-settings"
 	],
 	"find":
 	{
-		"height": 26.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -117,6 +133,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"assets-throughout",
+			"drawAssetAmountsThroughoutTheYearsComboChart",
+			"        '/",
 			"}\n",
 			"\"/",
 			"tab_size",
@@ -128,6 +147,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"total-assets-throughout",
+			"aotal-assets-throughout"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -143,268 +164,31 @@
 			[
 				{
 					"buffer": 0,
-					"file": "mpadv/views/party.py",
-					"semi_transient": false,
+					"file": "/home/georges/Dev/mp-asset-declaration-api/mpada/__init__.py",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 693,
+						"buffer_size": 4177,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								340,
-								340
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
 							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "mpadv.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 154,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								153,
-								153
-							]
-						],
-						"settings":
-						{
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -452,7 +236,7 @@
 	"project": "mpadv.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -487,7 +271,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 248.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

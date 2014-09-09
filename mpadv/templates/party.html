@@ -3,27 +3,129 @@
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
-    $( document ).ready(function() {
-        aggregateAssetDeclarations = {{ asset_declarations|tojson|safe }};
+    google.load("visualization", "1", {packages:["corechart"]});
 
-        $(aggregateAssetDeclarations).each(function(index){
+    $(document).ready(function() {
+
+        // Get delclarations JSON
+        declarations = {{ asset_declarations|tojson|safe }};
+        declarations.reverse();
+
+        // Init tabs: Total Assets Throughout Years.
+        initTotalAssetsThroughoutYearsTab(declarations);   
+
+        // Init tabs: Assets Throughout Years.
+        initAssetsThroughoutYearsCetegorizedBySourcesTab(declarations);        
+
+        // Init the year tabs for 'Relative Asset Contribution' pie charts 
+        initYearTabs(declarations);
+    });
+
+
+     /**
+     * Init tab: Total Assets throughout the year.
+     * Draw visualization for first tab (the default tab).
+     * Register event for each tabs so that visualization is drawn when we select them
+     **/
+    function initTotalAssetsThroughoutYearsTab(declarations){
+        drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(
+            declarations,
+            'total',
+            'Amount of Total Assets (Individual + Joint) Throughout The Years',
+            'pane-total-assets-throughout-years-individual-and-joint');
+
+        // Draw other combo charts when their tab is selected: Assets Throughout The Years Categorized by Their Sources.
+        $('.total-assets-throughout-years a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+
+            var dataAssetOrigin = $(e.target).attr('data-asset-source');
+
+            var paneIdEnd = dataAssetOrigin;
+            if(dataAssetOrigin === 'total'){
+                paneIdEnd = "individual-and-joint";
+            }
+            var paneId = 'pane-total-assets-throughout-years-' + paneIdEnd;
+
+            // Let's check if we already drew the charts for this tab.
+            // We don't want to redraw the charts if they are already there! 
+            if($('#' + paneId).children().length == 0){
+
+                // Build title string.
+                title = 'Amount of ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years';
+
+                drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(
+                    declarations,
+                    dataAssetOrigin,
+                    title,
+                    paneId);
+            }
+        });
+    }
+
+    /**
+     * Init tab: Assets throughout the year.
+     * Draw visualization for first tab (the default tab).
+     * Register event for each tabs so that visualization is drawn when we select them
+     **/
+    function initAssetsThroughoutYearsCetegorizedBySourcesTab(declarations){
+        // Draw combo chart: Total Assets (Individual + Joint) Throughout The Years Categorized by Their Sources.
+        drawAssetAmountsThroughoutTheYearsComboChart(
+            declarations,
+            'total',
+            'Amount of Total Assets (Individual + Joint) Throughout The Years Categorized by Their Sources',
+            'pane-assets-throughout-years-individual-and-joint');
+
+        // Draw other combo charts when their tab is selected: Assets Throughout The Years Categorized by Their Sources.
+        $('.assets-throughout-years a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+
+            var dataAssetOrigin = $(e.target).attr('data-asset-source');
+
+            var paneIdEnd = dataAssetOrigin;
+            if(dataAssetOrigin === 'total'){
+                paneIdEnd = "individual-and-joint";
+            }
+            var paneId = 'pane-assets-throughout-years-' + paneIdEnd;
+
+            // Let's check if we already drew the charts for this tab.
+            // We don't want to redraw the charts if they are already there! 
+            if($('#' + paneId).children().length == 0){
+
+                // Build title string.
+                title = 'Amount of ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years Categorized by Their Sources';
+
+                drawAssetAmountsThroughoutTheYearsComboChart(
+                    declarations,
+                    dataAssetOrigin,
+                    title,
+                    paneId);
+            }
+        });        
+    }
+
+    /**
+     * Init 'Relative Contribution' pie charts year tabs.
+     * draw charts for tab that is selected by default (latest year).
+     **/
+    function initYearTabs(declarations){
+
+        $(declarations).each(function(index){
             var declaration = $(this)[0];
             var year = declaration.year;
 
-            var tabId =  "panel-" + year;
+            var tabId =  "pane-" + year;
 
             // Create tab element and its content div for the current year.
-            $('.nav.nav-tabs').append('<li id="tab-' + tabId + '"><a href="#' + tabId + '" data-toggle="tab">' + year + '</a></li>');
-            $('.tab-content').append('<div id="' + tabId + '" class="tab-pane"></div>');
+            $('.nav.nav-tabs.relative-contribution-piecharts').append('<li id="tab-' + tabId + '" class="relative-contribution-piecharts"><a href="#' + tabId + '" data-toggle="tab">' + year + '</a></li>');
+            $('.tab-content.relative-contribution-piecharts').append('<div id="' + tabId + '" class="tab-pane"></div>');
 
             // Create 'Relative Contribution of Assets' pie chart container div.
             $('#' + tabId).append('<div id="' + tabId + '-total"></div>');
             $('#' + tabId).append('<div id="' + tabId + '-individual"></div>');
             $('#' + tabId).append('<div id="' + tabId + '-joint"></div>');
 
-            // If it's the first tab we create, then make it the active tab.
-            // Also, draw the charts for that tab since its the first tab that user will see.
-            if(index == 0){
+            // If it's the last tab that we create, then make it the active tab.
+            // Also, draw the charts for that tab since its the default tab that user will see.
+            // We select the last tab by default because it represents the latest year.
+            if(index == declarations.length-1){
                 $('#tab-' + tabId).addClass('active');
                 $('#' + tabId).addClass('active');
 
@@ -32,7 +134,7 @@
         });
 
         // When we switch tabs, draw the charts for that tab.
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+        $('.relative-contribution-piecharts a[data-toggle="tab"]').on('shown.bs.tab', function(e){
             var tabYear = $(e.target).text();
 
             // Get the tab href e.g. #panel-2011
@@ -46,7 +148,7 @@
             // We don't want to redraw the charts if they are already there! 
             if($(tabIdPrefixedWithHashtag).children().length == 0){
 
-                $(aggregateAssetDeclarations).each(function(index){
+                $(declarations).each(function(index){
                     var declaration = $(this)[0];
                     var declarationYear = declaration.year;
 
@@ -62,29 +164,30 @@
                 });
             }  
         });
+    }
 
-        /**
-            Draw pie charts showing the relative contribution of differt asset sources.
-        **/
-        function drawRelativeContributionPieCharts(declaration, year){
-            var tabId = "panel-" + year;
+    /**
+     * Draw 3 pie charts showing the relative contribution from different asset sources:
+     *  - Total Assets (Individual + Joint).
+     *  - Individual Assets.
+     *  - Joint Assets.
+     **/
+    function drawRelativeContributionPieCharts(declaration, year){
+        var tabId = "pane-" + year;
 
-            var titleTotal = 'Relative Contribution of Total Assets (Individual + Joint)';
-            drawRelativeContributionPieChart(declaration, 'total', titleTotal, tabId + '-total');
+        var titleTotal = 'Relative Contribution by Total of Owned Asset (Individual + Joint)';
+        drawRelativeContributionPieChart(declaration, 'total', titleTotal, tabId + '-total');
 
-            var titleIndividual = 'Relative Contribution of Individual Assets';
-            drawRelativeContributionPieChart(declaration, 'individual', titleIndividual, tabId + '-individual');
+        var titleIndividual = 'Relative Contribution by Individually Owned Asset';
+        drawRelativeContributionPieChart(declaration, 'individual', titleIndividual, tabId + '-individual');
 
-            var titleJoint = 'Relative Contribution of Joint Assets';
-            drawRelativeContributionPieChart(declaration, 'joint', titleJoint, tabId + '-joint');
-        }
+        var titleJoint = 'Relative Contribution by Jointly Owned Asset';
+        drawRelativeContributionPieChart(declaration, 'joint', titleJoint, tabId + '-joint');
+    }
 
-
-    });
-</script>
-<script type="text/javascript">
-    google.load("visualization", "1", {packages:["corechart"]});
-
+    /**
+     * Draw pie chart showing the relative contribution from different asset sources.
+     **/
     function drawRelativeContributionPieChart(declaration, assetOrigin, title, chartContainerDivId){
 
         var dataTable = google.visualization.arrayToDataTable([
@@ -110,13 +213,134 @@
         chart.draw(dataTable, options);
         
     }
+
+    /**
+     * Draw combo chart showing the asset amounts throught the years. 
+     **/
+    function drawAssetAmountsThroughoutTheYearsComboChart(declarations, assetOrigin, title, chartContainerDivId){
+        
+        var dataTable = google.visualization.arrayToDataTable([]);
+
+        dataTable.addColumn('string', 'Year');
+        dataTable.addColumn('number', 'Real Estate');
+        dataTable.addColumn('number', 'Movable');
+        dataTable.addColumn('number', 'Shares');
+        dataTable.addColumn('number', 'Bonds');
+        dataTable.addColumn('number', 'Cash');
+        dataTable.addColumn('number', 'Debts or Outstanding');
+        dataTable.addColumn('number', 'Annual Regular Salary');
+        dataTable.addColumn('number', 'Annual Honorariums Salary');
+
+        $(declarations).each(function(index){
+            var declaration = $(this)[0];
+   
+            dataTable.addRow([
+                 declaration.year.toString(), 
+                 declaration.realEstate[assetOrigin], // Real Estate.
+                 declaration.movable[assetOrigin], // Movable.
+                 declaration.shares[assetOrigin], // Shares.
+                 declaration.bonds[assetOrigin], // Bonds.
+                 declaration.cash[assetOrigin], // Cash.
+                 declaration.debtsOrOutstanding[assetOrigin], // Debts or Outstanding.
+                 declaration.annualSalary.regular[assetOrigin], // Annual Regular Salary.
+                 declaration.annualSalary.honorariums[assetOrigin] // Annual Honorariums Salary.
+            ]);
+        });
+
+        var options = {
+            title : title,
+            width: 1000,
+            height: 500,
+            vAxis: {title: "Amount"},
+            hAxis: {title: "Year"},
+            seriesType: "bars"
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById(chartContainerDivId));
+        chart.draw(dataTable, options);
+    }
+
+    /**
+     * Draw combo chart showing the asset amounts throught the years. 
+     **/
+    function drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(declarations, assetOrigin, title, chartContainerDivId){
+        
+        var dataTable = google.visualization.arrayToDataTable([]);
+
+        dataTable.addColumn('string', 'Year');
+        dataTable.addColumn('number', 'Real Estate');
+        dataTable.addColumn('number', 'Movable');
+        dataTable.addColumn('number', 'Shares');
+        dataTable.addColumn('number', 'Bonds');
+        dataTable.addColumn('number', 'Cash');
+        dataTable.addColumn('number', 'Annual Regular Salary');
+        dataTable.addColumn('number', 'Annual Honorariums Salary');
+
+        $(declarations).each(function(index){
+            var declaration = $(this)[0];
+   
+            dataTable.addRow([
+                 declaration.year.toString(), 
+                 declaration.realEstate[assetOrigin], // Real Estate.
+                 declaration.movable[assetOrigin], // Movable.
+                 declaration.shares[assetOrigin], // Shares.
+                 declaration.bonds[assetOrigin], // Bonds.
+                 declaration.cash[assetOrigin], // Cash.
+                 declaration.annualSalary.regular[assetOrigin], // Annual Regular Salary.
+                 declaration.annualSalary.honorariums[assetOrigin] // Annual Honorariums Salary.
+            ]);
+        });
+
+        var options = {
+            title : title,
+            width: 1000,
+            height: 500,
+            vAxis: {title: "Year"},
+            hAxis: {title: "Amount"},
+            seriesType: "bars",
+            isStacked: true,
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById(chartContainerDivId));
+        chart.draw(dataTable, options);
+    } 
 </script>
 
 
-<h2>Relative Contribution of Assets</h2>
+<h2>Total Assets Throughout The Years</h2>
 <div class="tabbable">
-    <ul class="nav nav-tabs"></ul>
-    <div class="tab-content"></div>
+    <ul class="nav nav-tabs total-assets-throughout-years-combo-chart">
+        <li id="tab-pane-total-assets-throughout-years-individual-and-joint" class="total-assets-throughout-years active"><a href="#pane-total-assets-throughout-years-individual-and-joint" data-toggle="tab" data-asset-source='total'>Individual + Joint</a></li>
+        <li id="tab-pane-total-assets-throughout-years-individual" class="total-assets-throughout-years"><a href="#pane-total-assets-throughout-years-individual" data-toggle="tab" data-asset-source='individual'>Individual</a></li>
+        <li id="tab-pane-total-assets-throughout-years-joint" class="total-assets-throughout-years"><a href="#pane-total-assets-throughout-years-joint" data-toggle="tab" data-asset-source='joint'>Joint</a></li>
+    </ul>
+    <div class="tab-content total-assets-throughout-years-combo-chart">
+        <div id="pane-total-assets-throughout-years-individual-and-joint" class="tab-pane active"></div>
+        <div id="pane-total-assets-throughout-years-individual" class="tab-pane"></div>
+        <div id="pane-total-assets-throughout-years-joint" class="tab-pane"></div>
+    </div>
+</div>
+
+
+<h2>Assets Throughout The Years by Their Source</h2>
+<div class="tabbable">
+    <ul class="nav nav-tabs assets-throughout-years-combo-chart">
+        <li id="tab-pane-assets-throughout-years-individual-and-joint" class="assets-throughout-years active"><a href="#pane-assets-throughout-years-individual-and-joint" data-toggle="tab" data-asset-source='total'>Individual + Joint</a></li>
+        <li id="tab-pane-assets-throughout-years-individual" class="assets-throughout-years"><a href="#pane-assets-throughout-years-individual" data-toggle="tab" data-asset-source='individual'>Individual</a></li>
+        <li id="tab-pane-assets-throughout-years-joint" class="assets-throughout-years"><a href="#pane-assets-throughout-years-joint" data-toggle="tab" data-asset-source='joint'>Joint</a></li>
+    </ul>
+    <div class="tab-content assets-throughout-years-combo-chart">
+        <div id="pane-assets-throughout-years-individual-and-joint" class="tab-pane active"></div>
+        <div id="pane-assets-throughout-years-individual" class="tab-pane"></div>
+        <div id="pane-assets-throughout-years-joint" class="tab-pane"></div>
+    </div>
+</div>
+
+
+<h2>Relative Asset Contributions by Their Source</h2>
+<div class="tabbable">
+    <ul class="nav nav-tabs relative-contribution-piecharts"></ul>
+    <div class="tab-content relative-contribution-piecharts"></div>
 </div>
 
 

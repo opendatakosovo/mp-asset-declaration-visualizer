@@ -1,5 +1,102 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Party</h2>
-{{ asset_declarations }}
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+        aggregateAssetDeclarations = {{ asset_declarations|tojson|safe }};
+
+        $(aggregateAssetDeclarations).each(function(index){
+            var declaration = $(this)[0]
+            var year = declaration.year;
+
+            var tabId =  "panel-" + year;
+
+            // Create tab element and its content div for the current year.
+            $('.nav.nav-tabs').append('<li id="tab-' + tabId + '"><a href="#' + tabId + '" data-toggle="tab">' + year + '</a></li>');
+            $('.tab-content').append('<div id="' + tabId + '" class="tab-pane"></div>')
+
+            // Create 'Relative Contribution of Assets' pie chart container div.
+            $('#' + tabId).append('<div id="' + tabId + '-total"></div>')      
+            $('#' + tabId).append('<div id="' + tabId + '-individual"></div>')
+            $('#' + tabId).append('<div id="' + tabId + '-joint"></div>')
+
+            // If it's the first tab  we create, then make it the active tab.
+            if(index == 0){
+                $('#tab-' + tabId).addClass('active');
+                $('#' + tabId).addClass('active');
+
+                titleTotal = 'Relative Contribution of Total Assets (Individual + Joint)';
+                drawRelativeContributionPieChart(declaration, 'total', titleTotal, tabId + '-total');
+
+                titleIndividual = 'Relative Contribution of Individual Assets';
+                drawRelativeContributionPieChart(declaration, 'individual', titleIndividual, tabId + '-individual');
+
+                titleJoint = 'Relative Contribution of Joint Assets';
+                drawRelativeContributionPieChart(declaration, 'joint', titleJoint, tabId + '-joint');
+            }
+
+
+        });
+
+        //$('.tab-content').tab();
+
+        /*
+        $(aggregateAssetDeclarations).each(function(){
+            declaration = $(this)[0]
+            year = declaration.year;
+
+            chartContainerDivId = 'relative-contribution-piechart-' + year
+
+            $('#relative-contribution-piecharts').append(
+                '<div id="' + chartContainerDivId + '"></div>');
+
+            
+        });*/
+    });
+</script>
+<script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+
+    function drawRelativeContributionPieChart(declaration, assetOrigin, title, chartContainerDivId){
+
+        var dataTable = google.visualization.arrayToDataTable([
+            ['Asset', 'Amount'],
+            ['Real Estate', declaration.realEstate[assetOrigin]],
+            ['Movable', declaration.movable[assetOrigin]],
+            ['Shares', declaration.shares[assetOrigin]],
+            ['Bonds', declaration.bonds[assetOrigin]],
+            ['Cash', declaration.cash[assetOrigin]],
+            ['Debts or Outstanding', declaration.debtsOrOutstanding[assetOrigin]],
+            ['Annual Regular Salary', declaration.annualSalary.regular[assetOrigin]],
+            ['Annual Honorariums Salary', declaration.annualSalary.honorariums[assetOrigin]]
+        ]);
+
+        var options = {
+            title: title,
+            width: 900,
+            height: 500
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById(chartContainerDivId));
+
+        chart.draw(dataTable, options);
+        
+    }
+</script>
+
+
+<h2>Relative Contribution of Assets</h2>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+  </ul>
+  <div class="tab-content">
+  </div><!-- /.tab-content -->
+</div><!-- /.tabbable -->
+
+<div id="relative-contribution-piecharts">
+
+</div>
+<div id="piechart" style="width: 900px; height: 500px;"></div>
+
 {% endblock %}

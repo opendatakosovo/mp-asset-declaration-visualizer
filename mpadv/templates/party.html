@@ -175,13 +175,13 @@
     function drawRelativeContributionPieCharts(declaration, year){
         var tabId = "pane-" + year;
 
-        var titleTotal = 'Relative Contribution by Total of Owned Asset (Individual + Joint)';
+        var titleTotal = 'Relative Contribution by Total of Owned Assets (Individual + Joint)';
         drawRelativeContributionPieChart(declaration, 'total', titleTotal, tabId + '-total');
 
-        var titleIndividual = 'Relative Contribution by Individually Owned Asset';
+        var titleIndividual = 'Relative Contribution by Individually Owned Assets';
         drawRelativeContributionPieChart(declaration, 'individual', titleIndividual, tabId + '-individual');
 
-        var titleJoint = 'Relative Contribution by Jointly Owned Asset';
+        var titleJoint = 'Relative Contribution by Jointly Owned Assets';
         drawRelativeContributionPieChart(declaration, 'joint', titleJoint, tabId + '-joint');
     }
 

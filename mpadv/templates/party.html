@@ -18,6 +18,8 @@
     assetSources['annual-regular-salary'] = true;
     assetSources['annual-honorariums-salary'] = true;
 
+    //TODO: Associate colors so that they don't change: ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00']
+
     // Set the asset sources we want to exclude from the charts.
     // The asset source we want to exlude are listed in the 'exlude' URL parameter.
     setAssetSourcesToExclude(assetSources);
@@ -296,8 +298,7 @@
 
         dataTable.addColumn('string', 'Asset');
         dataTable.addColumn('number', 'Amount');
-
-
+        
         if(assetSources['real-estate'] == true){
             dataTable.addRow(['Real Estate', declaration.realEstate[assetSource]]);
         }
@@ -374,6 +375,7 @@
             dataTable.addColumn('number', 'Annual Honorariums Salary');
         }
 
+
         dataTable.addRows(declarations.length);
         
         $(declarations).each(function(index){
@@ -387,7 +389,6 @@
 
             if(assetSources['real-estate'] == true){
                 dataTable.setCell(rowIndex, columnIndex, declaration.realEstate[assetSource]);
-                columnIndex++;
             }
 
             if(assetSources['movable'] == true){

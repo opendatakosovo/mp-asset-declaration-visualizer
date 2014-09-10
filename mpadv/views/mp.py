@@ -16,10 +16,12 @@ class MP(View):
         '''
         api_url = utils.get_api_url()
 
-        request_url = "%s/party/%s/mp/%s" % (api_url, party_slug, mp_name_slug)
+        request_url = "%s/aggregate/party/%s/mp/%s" % (api_url, party_slug, mp_name_slug)
 
         response = urlopen(request_url).read()
 
         asset_declarations = json.loads(response)
+        ad_results = asset_declarations['result']
 
-        return render_template('mp.html', asset_declarations=asset_declarations)
+        return render_template(
+            'aggregate_declarations.html', asset_declarations=ad_results)

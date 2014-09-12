@@ -16,7 +16,7 @@ class MP(View):
         '''
         api_url = utils.get_api_url()
 
-        request_url = "%s/aggregate/%s/%s" % (api_url, party_slug, mp_name_slug)
+        request_url = "%s/aggregate/sum/%s/%s" % (api_url, party_slug, mp_name_slug)
 
         response = urlopen(request_url).read()
 

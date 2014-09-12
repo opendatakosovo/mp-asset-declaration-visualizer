@@ -125,7 +125,7 @@ def register_url_rules(app):
 
     # Show declarations of a all members of a given party.
     app.add_url_rule(
-        '/party/<string:party_slug>',
+        '/<string:party_slug>',
         view_func=Party.as_view('party'))
 
     #app.add_url_rule(
@@ -134,7 +134,7 @@ def register_url_rules(app):
 
     # Show declarations of a given MP
     app.add_url_rule(
-        '/party/<string:party_slug>/mp/<string:mp_name_slug>',
+        '/<string:party_slug>/<string:mp_name_slug>',
         view_func=MP.as_view('mp'))
 
     #app.add_url_rule(

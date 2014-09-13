@@ -1,14 +1,63 @@
 <!doctype html>
 <html>
 	<head>
+        <script>
+            var basePath = '{{ config.BASE_PATH }}';
+        </script>
+
 		<script type="text/javascript" src="{{ url_for('static', filename='jQuery/jquery-1.11.1.min.js') }}"></script>
-		<script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
 
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
-		<title>Kosovo Assembly MPs Asset Declaration Visualizer</title>
+         <script type="text/javascript">
+            $.get( basePath + "/mps-grouped-by-parties", function( data ) {
+
+                // Create the dropown list of Parties
+                $.each(data, function(idx, value) {
+                    var partyAcronym = value['party']['acronym'];
+                    var partySlug = value['party']['slug'];
+                    var partyDeclarationUrl = basePath + '/' + partySlug;
+
+                    var partyListItemElement = '<li id="menu-item-' + partySlug + '" class="menu-item menu-item-has-children menu-item-' + partySlug + ' dropdown-submenu">';
+
+                    var partyAnchorElement = '<a title="' + partyAcronym + '" href="' + partyDeclarationUrl + '" data-toggle="dropdown" class="dropdown-toggle">' + partyAcronym + '</a>';
+
+                    var mpUnorderListElement = '<ul role="menu" class="dropdown-menu">';
+                
+                    mps = value['mps'];
+
+                    // Create the dropdown list of MPs for each Party
+                    $.each(mps, function(idx, mp){
+                        var mpSlug = mp["slug"];
+                        var mpName = mp["name"];
+                        var mpDeclarationUrl = basePath + '/' + partySlug + '/' + mpSlug;
+
+                        var mpListItemElement = 
+                            '<li id="menu-item-mp-' + mpSlug + '" class="menu-item menu-item-' + mpSlug + '"><a title="' + mpName + '" href="' + mpDeclarationUrl + '">' + mpName + '</a></li>';
+
+                        mpUnorderListElement = mpUnorderListElement + mpListItemElement;
+                    });
+
+                    mpUnorderListElement = mpUnorderListElement + '</ul>';
+
+                    var pmsGroupedByPartiesListItemElement = partyListItemElement + partyAnchorElement + mpUnorderListElement + '</li>';
+                    
+                    $('.dropdown-menu-party-or-mp').append(pmsGroupedByPartiesListItemElement);
+
+                    // The parent menu items (the parties) do not load the party URL when click on.
+                    // Add the click event listener for this.
+                    $('#menu-item-' + partySlug).click(function(){
+                        document.location.href = partyDeclarationUrl;
+                    });
+                });
+            });
+        </script>
+
+		<title>Asset Declaration Visualizer</title>
 	</head>
 
 	<body>
@@ -22,16 +71,35 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand">Kosovo Assembly MPs Asset Declaration Visualizer <em>(Prototype)</em></a>
+                    {% if config.BASE_PATH == '' %}
+                        <a class="navbar-brand" href="/">Asset Declaration Visualizer <em>(Prototype)</em></a>
+                    {% else %}
+                        <a class="navbar-brand" href="{{ config.BASE_PATH }}">Asset Declaration Visualizer <em>(Prototype)</em></a>
+                    {% endif %}
 				</div>
 
 				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav navbar-left">
+						<li id="menu-item-party-mp-selection" class="menu-item menu-item-type-post_type menu-item-object-page dropdown">
+                            <a title="Select Party or MP" href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                Select Party or MP <span class="caret"></span>
+                            </a>
+                            <ul role="menu" class="dropdown-menu dropdown-menu-party-or-mp"></ul>      
+        				</li>
+					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="https://github.com/opendatakosovo/mp-asset-declaration-visualizer" target="_blank">Source Code</a></li>
+						<li>
+							<a href="https://github.com/opendatakosovo/mp-asset-declaration-visualizer" target="_blank">Source Code</a>
+						</li>
 					</ul>
 				</div>
 			</div>
 		</nav>
+
+		<div id="container" class="container">
+			{% block containerDiv %}
+			{% endblock %}
+		</div>
 
 		
 		<div id="specific-charts-container" class="container">

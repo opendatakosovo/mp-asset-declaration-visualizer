@@ -105,13 +105,14 @@ def configure_logging(app):
 # Index page view.
 from views.index import Index
 
+# JSON of MPs grouped by Parties
+from views.mpsgroupedbyparties import MPsGroupedByParties
+
 # Party views.
 from views.party import Party
 
 # MP views.
 from views.mp import MP
-
-#TODO: Pagination, asset amount -based value search.
 
 
 def register_url_rules(app):
@@ -122,6 +123,10 @@ def register_url_rules(app):
 
     # Show index page.
     app.add_url_rule('/', view_func=Index.as_view('index'))
+
+    app.add_url_rule(
+        '/mps-grouped-by-parties',
+        view_func=MPsGroupedByParties.as_view('mps_grouped_by_parties'))
 
     # Show declarations of a all members of a given party.
     app.add_url_rule(

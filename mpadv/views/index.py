@@ -11,6 +11,11 @@ class Index(View):
     methods = ['GET']
 
     def dispatch_request(self):
+        medians = self.get_medians()
+
+        return render_template('index.html', medians=medians)
+
+    def get_medians(self):
         api_url = utils.get_api_url()
 
         request_url = "%s/aggregate/median" % api_url
@@ -19,4 +24,4 @@ class Index(View):
 
         medians = json.loads(response)
 
-        return render_template('index.html', medians=medians)
+        return medians

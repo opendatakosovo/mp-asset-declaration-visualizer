@@ -309,6 +309,13 @@ function getSingleDeclarationDataTable(declaration, assetSource){
         dataTable.addRow(['Annual Honorariums Salary', declaration.annualSalary.honorariums[assetSource]]);
     }
 
+    // Formater for column cells to display numbers as currency
+    var formatter = new google.visualization.NumberFormat({
+            fractionDigits: 0,
+            prefix: '€ '
+    });
+    formatter.format(dataTable, 1);
+
     return dataTable;
 
 }
@@ -355,6 +362,12 @@ function getMultipleDeclarationsDataTable(declarations, assetSource, showDebtsOr
 
 
     dataTable.addRows(declarations.length);
+
+    // Formater for column cells to display numbers as currency
+    var formatter = new google.visualization.NumberFormat({
+            fractionDigits: 0,
+            prefix: '€ '
+    });
     
     $(declarations).each(function(index){
         var declaration = $(this)[0];
@@ -367,41 +380,49 @@ function getMultipleDeclarationsDataTable(declarations, assetSource, showDebtsOr
 
         if(assetSources['real-estate'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.realEstate[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
 
         if(assetSources['movable'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.movable[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
 
         if(assetSources['shares'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.shares[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
 
         if(assetSources['bonds'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.bonds[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
 
         if(assetSources['cash'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.cash[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
         
         if(assetSources['debts-or-outstanding'] == true && showDebtsOrOutstanding == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.debtsOrOutstanding[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
         
         if(assetSources['annual-regular-salary'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.annualSalary.regular[assetSource]);
+            formatter.format(dataTable, columnIndex);
             columnIndex++;
         }
         
         if(assetSources['annual-honorariums-salary'] == true){
             dataTable.setCell(rowIndex, columnIndex, declaration.annualSalary.honorariums[assetSource]);
+            formatter.format(dataTable, columnIndex);
         }
     });
 

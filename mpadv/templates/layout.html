@@ -33,8 +33,16 @@
 			</div>
 		</nav>
 
-		<div class="container">
-			{% block body %}{% endblock %}
+		
+		<div id="specific-charts-container" class="container">
+			{% block specificChartsDiv %}
+			{% endblock %}
+		</div>
+
+
+		<div id="generic-charts-container" class="container">
+			{% block genericChartsDiv %}
+			{% endblock %}
 		</div>
 
 		<div class="push-for-footer"></div>

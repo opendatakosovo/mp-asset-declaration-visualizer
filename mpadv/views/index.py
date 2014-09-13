@@ -13,7 +13,7 @@ class Index(View):
     def dispatch_request(self):
         api_url = utils.get_api_url()
 
-        request_url = "%s/aggregate/medians" % api_url
+        request_url = "%s/aggregate/median" % api_url
 
         response = urlopen(request_url).read()
 

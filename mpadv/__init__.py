@@ -128,15 +128,7 @@ def register_url_rules(app):
         '/<string:party_slug>',
         view_func=Party.as_view('party'))
 
-    #app.add_url_rule(
-    #    '/party/<int:year>/<string:party_slug>',
-    #    view_func=PartyYear.as_view('party_year'))
-
     # Show declarations of a given MP
     app.add_url_rule(
         '/<string:party_slug>/<string:mp_name_slug>',
         view_func=MP.as_view('mp'))
-
-    #app.add_url_rule(
-    #   '/party/<int:year>/<string:party_slug>/mp/<string:mp_name_slug>',
-    #    view_func=MPYear.as_view('mp_year'))

@@ -24,4 +24,4 @@ class MP(View):
         ad_results = asset_declarations['result']
 
         return render_template(
-            'aggregate_declarations.html', asset_declarations=ad_results)
+            'mp.html', asset_declarations=ad_results)

@@ -55,7 +55,7 @@ function initTotalAssetsThroughoutYearsTab(declarations){
     drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(
         declarations,
         'total',
-        'Amount of Total Assets (Individual + Joint) Throughout The Years',
+        'Total Assets (Individual + Joint) Throughout The Years',
         'pane-total-assets-throughout-years-individual-and-joint');
 
     // Draw other combo charts when their tab is selected: Assets Throughout The Years Categorized by Their Sources.
@@ -74,7 +74,7 @@ function initTotalAssetsThroughoutYearsTab(declarations){
         if($('#' + paneId).children().length == 0){
 
             // Build title string.
-            title = 'Amount of ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years';
+            title = 'Total ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years';
 
             drawTotalAssetAmountsThroughoutTheYearsStackedBarChart(
                 declarations,
@@ -95,7 +95,7 @@ function initAssetsThroughoutYearsCetegorizedBySourcesTab(declarations){
     drawAssetAmountsThroughoutTheYearsComboChart(
         declarations,
         'total',
-        'Amount of Total Assets (Individual + Joint) Throughout The Years Categorized by Their Sources',
+        'Total Assets (Individual + Joint) Throughout The Years Categorized by Their Sources',
         'pane-assets-throughout-years-individual-and-joint');
 
     // Draw other combo charts when their tab is selected: Assets Throughout The Years Categorized by Their Sources.
@@ -114,7 +114,7 @@ function initAssetsThroughoutYearsCetegorizedBySourcesTab(declarations){
         if($('#' + paneId).children().length == 0){
 
             // Build title string.
-            title = 'Amount of ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years Categorized by Their Sources';
+            title = 'Total ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years Categorized by Their Sources';
 
             drawAssetAmountsThroughoutTheYearsComboChart(
                 declarations,
@@ -238,7 +238,7 @@ function drawAssetAmountsThroughoutTheYearsComboChart(declarations, assetSource,
         title : title,
         width: 1000,
         height: 500,
-        vAxis: {title: "Amount"},
+        vAxis: {title: "Amount (log scale)", logScale: true},
         hAxis: {title: "Year"},
         seriesType: "bars"
     };

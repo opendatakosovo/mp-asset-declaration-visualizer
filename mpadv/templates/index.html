@@ -1,3 +1,32 @@
 {% extends "layout.html" %}
 {% block containerDiv %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Party Asset Declarations Throughout The Years</h3>
+  </div>
+  <div class="panel-body">
+    <div class="tabbable">
+        <ul class="nav nav-tabs party-asset-declarations-line-chart">
+            <li id="tab-pane-party-asset-declarations-median" class="party-asset-declarations active">
+                <a href="#pane-party-asset-declarations-median" data-toggle="tab">
+                    Median
+                </a>
+            </li>
+            <li id="tab-pane-party-asset-declarations-log-scale" class="party-asset-declarations">
+                <a href="#pane-party-asset-declarations-log-scale" data-toggle="tab">
+                    Log Scale
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content party-asset-declarations-line-chart">
+            <div id="pane-party-asset-declarations-median" class="tab-pane"></div>
+            <div id="pane-party-asset-declarations-log-scale" class="tab-pane"></div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
 {% endblock %}

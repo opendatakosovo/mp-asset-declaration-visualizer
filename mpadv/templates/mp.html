@@ -1,3 +1,16 @@
 {% extends "declarations.html" %}
-{% block specificChartsDiv %}
+
+{% block moreScripts %}
+<script type="text/javascript">
+    var declaredYears = {{ declared_years|tojson|safe }};
+
+    $(document).ready(function(){
+        var pageTitle = declaredYears.mp.name + "'s Asset Declarations"
+        initPageHeader(pageTitle);
+    });
+
+    function initPageHeader(pageTitle){
+        $('#page-header').html(pageTitle);
+    }
+</script>
 {% endblock %}

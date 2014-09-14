@@ -13,7 +13,6 @@ class Party(View):
         ''' Get declarations for a given party.
         :param party_slug: slug value of the party.
         '''
-
         party_sum_declarations = self.get_aggregate_sum_declarations(party_slug)
         party_mps_declarations = self.get_asset_declarations_of_all_party_mps(party_slug)
 

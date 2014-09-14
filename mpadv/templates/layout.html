@@ -40,7 +40,7 @@
                             var mpDeclarationUrl = basePath + '/' + partySlug + '/' + mpSlug;
 
                             var mpListItemElement = 
-                                '<li id="menu-item-mp-' + mpSlug + '" class="menu-item menu-item-' + mpSlug + '"><a title="' + mpName + '" href="' + mpDeclarationUrl + '">' + mpName + '</a></li>';
+                                '<li id="menu-item-mp-' + mpSlug + '" class="menu-item menu-item-' + mpSlug + '"><a id="menu-item-anchor-mp-' + mpSlug + '" title="' + mpName + '" href="' + mpDeclarationUrl + '">' + mpName + '</a></li>';
 
                             mpUnorderListElement = mpUnorderListElement + mpListItemElement;
                         });
@@ -115,6 +115,14 @@
 				</div>
 			</div>
 		</nav>
+
+        <div id="page-header-container" class="container" align="center">
+            <h3 id="page-header">
+                {% block pageHeader %}
+                {% endblock %}
+            </h3>
+            <br>
+        </div>
 
 		<div id="container" class="container">
 			{% block containerDiv %}

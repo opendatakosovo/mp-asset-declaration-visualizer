@@ -6,9 +6,17 @@
     var whoDeclared = {{ mps_who_declared|tojson|safe }};
     var declarationYears = {{ declaration_years|tojson|safe }};
 
+    var partyAcronym = mpsDeclarations[0].party.acronym
+    var pageTitle = partyAcronym + " Asset Declarations"
+
     $(document).ready(function() {
-       initPartyMPsAssetDeclarationTab();
+        initPageHeader(pageTitle)
+        initPartyMPsAssetDeclarationTab();
     });
+
+    function initPageHeader(pageTitle){
+        $('#page-header').html(pageTitle);
+    }
 
     /**
      * Init tabs: Assets throughout the year.

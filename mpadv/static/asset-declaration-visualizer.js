@@ -489,3 +489,21 @@ function getAssetDeclarationDataTable(declarations, declarationYears, assetSourc
 
     return dataTable;    
 }
+
+/**
+ * Get line chart asset declarations of Parties.
+ **/
+function drawPartiesAssetDeclarationLineChart(dataTable, title, chartContainerDivId){
+
+    var options = {
+        title : title,
+        width: 1100,
+        height: 600,
+        vAxis: {title: "Amount (log scale)", logScale: true},
+        hAxis: {title: "Year"},
+        legend: 'right'
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById(chartContainerDivId));
+    chart.draw(dataTable, options);
+}

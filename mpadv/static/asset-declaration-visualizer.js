@@ -428,3 +428,64 @@ function getMultipleDeclarationsDataTable(declarations, assetSource, showDebtsOr
 
     return dataTable;
 }
+
+
+/**
+ * Get data table for asset declarations by Parties or by MPs.
+ **/
+function getAssetDeclarationDataTable(declarations, declarationYears, assetSource, whoDeclared, whoKey){
+
+    var dataTable = google.visualization.arrayToDataTable([]);
+    var yearAssociationArray = Array();
+    var whoAssociationArray = Array();
+
+    // Create table columns
+    dataTable.addColumn('string', 'Year');
+
+    $(whoDeclared).each(function(index, who){
+        // Build look up array so that we know which column index to set dataTable's cell value
+        // when we iterate through the asset declarations.
+        whoAssociationArray[who] = index + 1;
+
+        // Create the column.
+        dataTable.addColumn('number', who);
+
+    });
+
+    // Create the year rows.
+    dataTable.addRows(declarationYears.length);
+
+    $(declarationYears).each(function(index, year){
+        // Build look up array so that we know which row index to set dataTable's cell value
+        // when we iterate through the asset declarations.
+        yearAssociationArray[year] = index;
+
+        // Set values in year column.
+        dataTable.setCell(index, 0, year.toString());
+    });
+
+    // Set asset declaration values in the data table's cells.
+    $(declarations).each(function(index, declaration){
+        
+        year = declaration.year;
+        rowIndex = yearAssociationArray[year];
+
+        whoSlug = declaration[whoKey]['name'];
+        columnIndex = whoAssociationArray[whoSlug];
+
+        dataTable.setCell(rowIndex, columnIndex, declaration['totals'][assetSource]);
+    });
+
+    
+    // Format column cells
+    var formatter = new google.visualization.NumberFormat({
+            fractionDigits: 0,
+            prefix: '€ '
+    });
+
+    for(var i = 1; i < whoDeclared.length; i++){
+        formatter.format(dataTable, i);
+    }
+
+    return dataTable;    
+}

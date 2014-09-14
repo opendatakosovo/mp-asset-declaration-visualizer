@@ -1,168 +1,109 @@
 {% extends "declarations.html" %}
-{% block specificChartsDiv %}
-    <script type="text/javascript">
-        var partyMPsDeclarations = {{ party_mps_declarations|tojson|safe }};
-        var mpsWhoDeclared = {{ mps_who_declared|tojson|safe }};
-        var declarationYears = {{ declaration_years|tojson|safe }};
 
-        $(document).ready(function() {
-           initPartyMPsAssetDeclarationTab();
-        });
+{% block moreScripts %}
+<script type="text/javascript">
+    var mpsDeclarations = {{ party_mps_declarations|tojson|safe }};
+    var whoDeclared = {{ mps_who_declared|tojson|safe }};
+    var declarationYears = {{ declaration_years|tojson|safe }};
 
-        /**
-         * Init tabs: Assets throughout the year.
-         * Draw chart for first tab (the default tab).
-         * Register event for each tabs so that chart is drawn when we select them.
-         **/
-        function initPartyMPsAssetDeclarationTab(){
+    $(document).ready(function() {
+       initPartyMPsAssetDeclarationTab();
+    });
 
-            // Draw the chart that will be displayed by default.
-            drawPartyMPsAssetDeclarationLineChart(
-                'total',
-                'Total Assets of MPs Throughout The Years',
-                'pane-asset-declarations-from-party-mps-individual-and-joint');
+    /**
+     * Init tabs: Assets throughout the year.
+     * Draw chart for first tab (the default tab).
+     * Register event for each tabs so that chart is drawn when we select them.
+     **/
+    function initPartyMPsAssetDeclarationTab(){
 
-
-            // Draw other line charts when their tab is selected.
-            $('.asset-declarations-from-party-mps a[data-toggle="tab"]').on('shown.bs.tab', function(e){
-
-                var dataAssetOrigin = $(e.target).attr('data-asset-source');
-
-                var paneIdEnd = dataAssetOrigin;
-                if(dataAssetOrigin === 'total'){
-                    paneIdEnd = "individual-and-joint";
-                }
-                var paneId = 'pane-asset-declarations-from-party-mps-' + paneIdEnd;
-
-                // Let's check if we already drew the chart for this tab.
-                // We don't want to redraw the charts if they are already there! 
-                if($('#' + paneId).children().length == 0){
-
-                    // Build title string.
-                    title = 'Total ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets of MPs Throughout The Years';
-
-                    drawPartyMPsAssetDeclarationLineChart(
-                        dataAssetOrigin,
-                        title,
-                        paneId);
-                }
-            });        
-        }
+        // Draw the chart that will be displayed by default.
+        drawPartyMPsAssetDeclarationLineChart(
+            'total',
+            'Total MP Assets Throughout The Years',
+            'pane-asset-declarations-from-party-mps-individual-and-joint');
 
 
-        /**
-         * Get line chart for Party MPs asset declarations.
-         **/
-        function drawPartyMPsAssetDeclarationLineChart(assetSource, title, chartContainerDivId){
-    
-            var dataTable = getPartyMPsAssetDeclarationDataTable(assetSource, mpsWhoDeclared, declarationYears);
+        // Draw other line charts when their tab is selected.
+        $('.asset-declarations-from-party-mps a[data-toggle="tab"]').on('shown.bs.tab', function(e){
 
-            var options = {
-                title : title,
-                width: 1200,
-                height: 600,
-                vAxis: {title: "Amount (log scale)", logScale: true},
-                hAxis: {title: "Year"},
-                legend: 'bottom'
-            };
+            var dataAssetOrigin = $(e.target).attr('data-asset-source');
 
-            var chart = new google.visualization.LineChart(document.getElementById(chartContainerDivId));
-            chart.draw(dataTable, options);
-        }
-
-        /**
-         * Get data table for Party MPs asset declarations.
-         **/
-        function getPartyMPsAssetDeclarationDataTable(assetSource, mpsWhoDeclared, declarationYears){
-
-            var dataTable = google.visualization.arrayToDataTable([]);
-            var yearAssociationArray = Array();
-            var mpAssociationArray = Array();
-
-            // Create table columns
-            dataTable.addColumn('string', 'Year');
-
-            $(mpsWhoDeclared).each(function(index, mp){
-                // Build look up array so that we know which column index to set dataTable's cell value
-                // when we iterate through the asset declarations.
-                mpAssociationArray[mp] = index + 1;
-
-                // Create the column.
-                dataTable.addColumn('number', mp);
-
-            });
-
-            // Create the year rows.
-            dataTable.addRows(declarationYears.length);
-
-            $(declarationYears).each(function(index, year){
-                // Build look up array so that we know which row index to set dataTable's cell value
-                // when we iterate through the asset declarations.
-                yearAssociationArray[year] = index;
-
-                // Set values in year column.
-                dataTable.setCell(index, 0, year.toString());
-            });
-
-            // Set asset declaration values in the data table's cells.
-            $(partyMPsDeclarations).each(function(index, declaration){
-                
-                year = declaration.year;
-                rowIndex = yearAssociationArray[year];
-
-                mpSlug = declaration.mp.name;
-                columnIndex = mpAssociationArray[mpSlug];
-
-                dataTable.setCell(rowIndex, columnIndex, declaration['totals'][assetSource]);
-            });
-
-            
-            // Format column cells
-            var formatter = new google.visualization.NumberFormat({
-                    fractionDigits: 0,
-                    prefix: '€ '
-            });
-
-            for(var i = 1; i < mpsWhoDeclared.length; i++){
-                formatter.format(dataTable, i);
+            var paneIdEnd = dataAssetOrigin;
+            if(dataAssetOrigin === 'total'){
+                paneIdEnd = "individual-and-joint";
             }
+            var paneId = 'pane-asset-declarations-from-party-mps-' + paneIdEnd;
 
-            return dataTable;    
-        }
-    </script>
+            // Let's check if we already drew the chart for this tab.
+            // We don't want to redraw the charts if they are already there! 
+            if($('#' + paneId).children().length == 0){
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Total Asset Declarations Throughout The Years From The Party's MPs</h3>
-        </div>
-        <div class="panel-body">
-            <div class="tabbable">
-                <ul class="nav nav-tabs asset-declarations-from-party-mps-line-chart">
-                    <li id="tab-pane-asset-declarations-from-party-mps-individual-and-joint" class="asset-declarations-from-party-mps active">
-                        <a href="#pane-asset-declarations-from-party-mps-individual-and-joint" data-toggle="tab" data-asset-source='total'>
-                            Individual + Joint
-                        </a>
-                    </li>
-                    <li id="tab-pane-asset-declarations-from-party-mps-individual" class="asset-declarations-from-party-mps">
-                        <a href="#pane-asset-declarations-from-party-mps-individual" data-toggle="tab" data-asset-source='individual'>
-                            Individual
-                        </a>
-                    </li>
-                    <li id="tab-pane-asset-declarations-from-party-mps-joint" class="asset-declarations-from-party-mps">
-                        <a href="#pane-asset-declarations-from-party-mps-joint" data-toggle="tab" data-asset-source='joint'>
-                            Joint
-                        </a>
-                    </li>
-                </ul>
-                <div class="tab-content asset-declarations-from-party-mps-line-chart">
-                    <div id="pane-asset-declarations-from-party-mps-individual-and-joint" class="tab-pane active"></div>
-                    <div id="pane-asset-declarations-from-party-mps-individual" class="tab-pane"></div>
-                    <div id="pane-asset-declarations-from-party-mps-joint" class="tab-pane"></div>
-                </div>
+                // Build title string.
+                title = 'Total MP ' + paneIdEnd.charAt(0).toUpperCase() + paneIdEnd.slice(1) + ' Assets Throughout The Years';
+
+                drawPartyMPsAssetDeclarationLineChart(
+                    dataAssetOrigin,
+                    title,
+                    paneId);
+            }
+        });        
+    }
+
+
+    /**
+     * Get line chart for Party MPs asset declarations.
+     **/
+    function drawPartyMPsAssetDeclarationLineChart(assetSource, title, chartContainerDivId){
+
+        var dataTable = getAssetDeclarationDataTable(mpsDeclarations, declarationYears, assetSource, whoDeclared, 'mp');
+
+        var options = {
+            title : title,
+            width: 1200,
+            height: 600,
+            vAxis: {title: "Amount (log scale)", logScale: true},
+            hAxis: {title: "Year"},
+            legend: 'bottom'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById(chartContainerDivId));
+        chart.draw(dataTable, options);
+    }
+</script>
+{% endblock %}
+
+{% block specificChartsDiv %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Total MP Assets Throughout The Years</h3>
+    </div>
+    <div class="panel-body">
+        <div class="tabbable">
+            <ul class="nav nav-tabs asset-declarations-from-party-mps-line-chart">
+                <li id="tab-pane-asset-declarations-from-party-mps-individual-and-joint" class="asset-declarations-from-party-mps active">
+                    <a href="#pane-asset-declarations-from-party-mps-individual-and-joint" data-toggle="tab" data-asset-source='total'>
+                        Individual + Joint
+                    </a>
+                </li>
+                <li id="tab-pane-asset-declarations-from-party-mps-individual" class="asset-declarations-from-party-mps">
+                    <a href="#pane-asset-declarations-from-party-mps-individual" data-toggle="tab" data-asset-source='individual'>
+                        Individual
+                    </a>
+                </li>
+                <li id="tab-pane-asset-declarations-from-party-mps-joint" class="asset-declarations-from-party-mps">
+                    <a href="#pane-asset-declarations-from-party-mps-joint" data-toggle="tab" data-asset-source='joint'>
+                        Joint
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content asset-declarations-from-party-mps-line-chart">
+                <div id="pane-asset-declarations-from-party-mps-individual-and-joint" class="tab-pane active"></div>
+                <div id="pane-asset-declarations-from-party-mps-individual" class="tab-pane"></div>
+                <div id="pane-asset-declarations-from-party-mps-joint" class="tab-pane"></div>
             </div>
         </div>
     </div>
-
-    <br><br>
-
+</div>
+<br><br>
 {% endblock %}

@@ -1,12 +1,11 @@
 {% extends "layout.html" %}
-{% block genericChartsDiv %}
 
-<script type="text/javascript" src="{{ url_for('static', filename='asset-declaration-visualizer.js') }}"></script>
+{% block scripts %}
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
 
     // Get delclarations JSON
-    declarations = {{ asset_declarations|tojson|safe }};
+    var declarations = {{ asset_declarations|tojson|safe }};
     declarations.reverse(); 
 
     $(document).ready(function() {
@@ -20,8 +19,10 @@
         initYearTabs(declarations);
     });
 </script>
+{% endblock %}
 
 
+{% block genericChartsDiv %}
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">Total Assets Throughout The Years</h3>

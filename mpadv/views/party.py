@@ -63,7 +63,7 @@ class Party(View):
         '''
         api_url = utils.get_api_url()
 
-        request_url = "%s/aggregate/declared-years/%s" % (api_url, party_slug)
+        request_url = "%s/aggregate/years-mps-declared/%s" % (api_url, party_slug)
 
         response = urlopen(request_url).read()
 

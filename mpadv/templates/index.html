@@ -1,32 +1,78 @@
 {% extends "layout.html" %}
-{% block containerDiv %}
 
+
+{% block scripts %}
+<script>
+    google.load("visualization", "1", {packages:["corechart"]});
+
+    var medians = {{ medians|tojson|safe }};
+    var whoDeclared = {{ parties_who_declared|tojson|safe }};
+    var declarationYears = {{ declaration_years|tojson|safe }};
+
+    $(document).ready(function() {
+       initPartiesMedianAssetDeclarationTab();
+    });
+
+    /**
+     * Init tabs: Assets throughout the year.
+     * Draw chart for first tab (the default tab).
+     * Register event for each tabs so that chart is drawn when we select them.
+     **/
+    function initPartiesMedianAssetDeclarationTab(){
+
+        // Draw the chart that will be displayed by default.
+        drawPartiesMedianAssetDeclarationLineChart(
+            'total',
+            'Party Median Assets Throughout The Years',
+            'pane-party-asset-declarations-median');        
+    }
+
+    /**
+     * Get line chart for Parties asset declarations.
+     **/
+    function drawPartiesMedianAssetDeclarationLineChart(assetSource, title, chartContainerDivId){
+
+        var dataTable = getAssetDeclarationDataTable(medians, declarationYears, assetSource, whoDeclared, 'party');
+
+        var options = {
+            title : title,
+            width: 1100,
+            height: 600,
+            vAxis: {title: "Amount (median)", logScale: true},
+            hAxis: {title: "Year"},
+            legend: 'right'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById(chartContainerDivId));
+        chart.draw(dataTable, options);
+    }
+</script>
+{% endblock %}
+
+{% block containerDiv %}
 <div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Party Asset Declarations Throughout The Years</h3>
-  </div>
-  <div class="panel-body">
-    <div class="tabbable">
-        <ul class="nav nav-tabs party-asset-declarations-line-chart">
-            <li id="tab-pane-party-asset-declarations-median" class="party-asset-declarations active">
-                <a href="#pane-party-asset-declarations-median" data-toggle="tab">
-                    Median
-                </a>
-            </li>
-            <li id="tab-pane-party-asset-declarations-log-scale" class="party-asset-declarations">
-                <a href="#pane-party-asset-declarations-log-scale" data-toggle="tab">
-                    Log Scale
-                </a>
-            </li>
-        </ul>
-        <div class="tab-content party-asset-declarations-line-chart">
-            <div id="pane-party-asset-declarations-median" class="tab-pane"></div>
-            <div id="pane-party-asset-declarations-log-scale" class="tab-pane"></div>
+    <div class="panel-heading">
+        <h3 class="panel-title">Party Assets Throughout The Years</h3>
+    </div>
+    <div class="panel-body">
+        <div class="tabbable">
+            <ul class="nav nav-tabs party-asset-declarations-line-chart">
+                <li id="tab-pane-party-asset-declarations-median" class="party-asset-declarations active">
+                    <a href="#pane-party-asset-declarations-median" data-toggle="tab">
+                        Median
+                    </a>
+                </li>
+                <li id="tab-pane-party-asset-declarations-log-scale" class="party-asset-declarations">
+                    <a href="#pane-party-asset-declarations-log-scale" data-toggle="tab">
+                        Log Scale
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content party-asset-declarations-line-chart">
+                <div id="pane-party-asset-declarations-median" class="tab-pane"></div>
+                <div id="pane-party-asset-declarations-log-scale" class="tab-pane"></div>
+            </div>
         </div>
     </div>
-  </div>
 </div>
-
-
-
 {% endblock %}

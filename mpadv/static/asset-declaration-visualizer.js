@@ -483,7 +483,7 @@ function getAssetDeclarationDataTable(declarations, declarationYears, assetSourc
             prefix: '€ '
     });
 
-    for(var i = 1; i < whoDeclared.length; i++){
+    for(var i = 1; i <= whoDeclared.length; i++){
         formatter.format(dataTable, i);
     }
 

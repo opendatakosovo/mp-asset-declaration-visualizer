@@ -4,7 +4,6 @@ from urllib2 import urlopen
 from mpadv import utils
 
 import json
-import time
 
 
 class Index(View):
@@ -27,8 +26,7 @@ class Index(View):
             medians=party_aggregate_medians,
             sums=party_aggregate_sums,
             parties_who_declared=parties_who_declared,
-            declaration_years=declaration_years,
-            time=time.ctime())
+            declaration_years=declaration_years)
 
     def get_aggregate_medians(self, parties_string):
         api_url = utils.get_api_url()

@@ -4,11 +4,31 @@ import logging
 import logging.config
 
 from logging.handlers import RotatingFileHandler
+
 from flask import Flask
+from flask.ext.cache import Cache
 
 from utils.utils import Utils
 
 utils = Utils()
+
+'''
+    Import Views
+'''
+# Index page view.
+from views.index import Index
+
+# JSON of MPs grouped by Parties
+from views.mpsgroupedbyparties import MPsGroupedByParties
+
+# Party views.
+from views.party import Party
+
+# MP views.
+from views.mp import MP
+
+
+
 
 
 def create_app():
@@ -65,6 +85,12 @@ def load_config(app):
 
     app.config['LOG_LEVEL'] = config.get('Logging', 'LEVEL').upper()
 
+    # Caching
+    app.config['CACHE_TYPE'] = config.get('Caching', 'TYPE')
+    app.config['CACHE_DEFAULT_TIMEOUT'] = int(config.get('Caching', 'DEFAULT_TIMEOUT'))
+
+    app.cache = Cache(app)
+
 
 def configure_logging(app):
     ''' Configure logging.
@@ -102,38 +128,29 @@ def configure_logging(app):
     app.logger.info('Logging to: %s', log_path)
 
 
-# Index page view.
-from views.index import Index
-
-# JSON of MPs grouped by Parties
-from views.mpsgroupedbyparties import MPsGroupedByParties
-
-# Party views.
-from views.party import Party
-
-# MP views.
-from views.mp import MP
-
-
 def register_url_rules(app):
     ''' Register the URL rules.
     Use pluggable class-based views: http://flask.pocoo.org/docs/views/
     :param app: the Flask application instance.
     '''
 
-    # Show index page.
-    app.add_url_rule('/', view_func=Index.as_view('index'))
+    # Show index page, apply caching.
+    cached_index = app.cache.cached()(Index.as_view('index'))
+    app.add_url_rule('/', view_func=cached_index)
 
+    cached_grouped_by_parties = app.cache.cached()(MPsGroupedByParties.as_view('mps_grouped_by_parties'))
     app.add_url_rule(
         '/mps-grouped-by-parties',
-        view_func=MPsGroupedByParties.as_view('mps_grouped_by_parties'))
+        view_func=cached_grouped_by_parties)
 
-    # Show declarations of a all members of a given party.
+    # Show declarations of a all members of a given party. Apply caching.
+    cached_party = app.cache.cached()(Party.as_view('party'))
     app.add_url_rule(
         '/<string:party_slug>',
-        view_func=Party.as_view('party'))
+        view_func=cached_party)
 
-    # Show declarations of a given MP
+    # Show declarations of a given MP. Apply caching.
+    cached_mp = app.cache.cached()(MP.as_view('mp'))
     app.add_url_rule(
         '/<string:party_slug>/<string:mp_name_slug>',
-        view_func=MP.as_view('mp'))
+        view_func=cached_mp)
